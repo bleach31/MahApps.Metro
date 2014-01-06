@@ -186,15 +186,9 @@
                                     Property="Stroke"
                                     Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(Controls:TextboxHelper.FocusBorderBrush)}" />
                         </Trigger>
-                        <Trigger SourceName="PART_ClearText"
-                                 Property="IsMouseOver"
-                                 Value="True">
-                            <Setter TargetName="PART_ClearText"
-                                    Property="Background"
-                                    Value="{DynamicResource GrayBrush8}" />
-                            <Setter TargetName="PART_ClearText"
-                                    Property="Foreground"
-                                    Value="{DynamicResource AccentColorBrush}" />
+                        <Trigger SourceName="PART_ClearText" Property="IsMouseOver" Value="True">
+                            <Setter TargetName="PART_ClearText" Property="Background" Value="{DynamicResource GrayBrush8}" />
+                            <Setter TargetName="PART_ClearText" Property="Foreground" Value="{DynamicResource BlackBrush}" />
                         </Trigger>
                         <Trigger SourceName="PART_ClearText"
                                  Property="IsPressed"
@@ -440,15 +434,9 @@
                                     Property="Stroke"
                                     Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(Controls:TextboxHelper.FocusBorderBrush)}" />
                         </Trigger>
-                        <Trigger SourceName="PART_ClearText"
-                                 Property="IsMouseOver"
-                                 Value="True">
-                            <Setter TargetName="PART_ClearText"
-                                    Property="Background"
-                                    Value="{DynamicResource GrayBrush8}" />
-                            <Setter TargetName="PART_ClearText"
-                                    Property="Foreground"
-                                    Value="{DynamicResource AccentColorBrush}" />
+                        <Trigger SourceName="PART_ClearText" Property="IsMouseOver" Value="True">
+                            <Setter TargetName="PART_ClearText" Property="Background" Value="{DynamicResource GrayBrush8}" />
+                            <Setter TargetName="PART_ClearText" Property="Foreground" Value="{DynamicResource BlackBrush}" />
                         </Trigger>
                         <Trigger SourceName="PART_ClearText"
                                  Property="IsPressed"
