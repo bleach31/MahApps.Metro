@@ -70,10 +70,10 @@
                                 <ColumnDefinition Width="auto" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <Image Visibility="{TemplateBinding ShowIconOnTitleBar, Converter={StaticResource BooleanToVisibilityConverter}}"
+                            <Image RenderOptions.BitmapScalingMode="Fant"
                                    Source="{TemplateBinding Icon}"
-                                   RenderOptions.EdgeMode="Aliased"
-                                   RenderOptions.BitmapScalingMode="HighQuality" />
+                                   Visibility="{TemplateBinding ShowIconOnTitleBar,
+                                                                Converter={StaticResource BooleanToVisibilityConverter}}" />
                             <TextBlock x:Name="WindowTitleTextBlock"
                                        Grid.Column="1"
                                        Text="{TemplateBinding Title}"
