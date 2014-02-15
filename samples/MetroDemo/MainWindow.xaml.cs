@@ -29,6 +29,7 @@ namespace MetroDemo
             var dateTime = DateTime.Now;
             transitioning.Content = new TextBlock { Text = "Transitioning Content! " + dateTime, SnapsToDevicePixels = true };
             customTransitioning.Content = new TextBlock { Text = "Custom transistion! " + dateTime, SnapsToDevicePixels = true };
+            SecondcustomTransitioning.Content = new TextBlock { Text = "Second custom transistion! " + dateTime, SnapsToDevicePixels = true };
         }
 
         private void ThemeLight(object sender, RoutedEventArgs e)
@@ -51,7 +52,8 @@ namespace MetroDemo
         private Window flyoutDemo;
         private void LaunchFlyoutDemo(object sender, RoutedEventArgs e)
         {
-            if (flyoutDemo == null) {
+            if (flyoutDemo == null)
+            {
                 flyoutDemo = new FlyoutDemo();
                 flyoutDemo.Closed += (o, args) => flyoutDemo = null;
             }
@@ -59,11 +61,6 @@ namespace MetroDemo
                 flyoutDemo.Hide();
             else
                 flyoutDemo.Show();
-        }
-
-        private void LaunchPanoramaDemo(object sender, RoutedEventArgs e)
-        {
-            new PanoramaDemo().Show();
         }
 
         private void LaunchIcons(object sender, RoutedEventArgs e)
@@ -74,7 +71,8 @@ namespace MetroDemo
         private Window cleanWindowDemo;
         private void LauchCleanDemo(object sender, RoutedEventArgs e)
         {
-            if (cleanWindowDemo == null) {
+            if (cleanWindowDemo == null)
+            {
                 cleanWindowDemo = new CleanWindowDemo();
                 cleanWindowDemo.Closed += (o, args) => cleanWindowDemo = null;
             }
@@ -95,12 +93,12 @@ namespace MetroDemo
 
         private async void ShowDialogOutside(object sender, RoutedEventArgs e)
         {
-            var dialog = (BaseMetroDialog) this.Resources["SimpleDialogTest"];
+            var dialog = (BaseMetroDialog)this.Resources["SimpleDialogTest"];
             dialog = dialog.ShowDialogExternally();
 
             await TaskEx.Delay(5000);
 
-            dialog.RequestClose();
+            await dialog.RequestCloseAsync();
         }
 
         private async void ShowMessageDialog(object sender, RoutedEventArgs e)
@@ -116,24 +114,24 @@ namespace MetroDemo
                 FirstAuxiliaryButtonText = "Cancel"
             };
 
-            MessageDialogResult result = await this.ShowMessageAsync("Hello!", "Welcome to the world of metro! ", 
+            MessageDialogResult result = await this.ShowMessageAsync("Hello!", "Welcome to the world of metro! ",
                 MessageDialogStyle.AffirmativeAndNegativeAndSingleAuxiliary, mySettings);
 
             if (result != MessageDialogResult.FirstAuxiliary)
-            await this.ShowMessageAsync("Result", "You said: " + (result == MessageDialogResult.Affirmative ? mySettings.AffirmativeButtonText : mySettings.NegativeButtonText + 
-                Environment.NewLine + Environment.NewLine + "This dialog will follow the Use Accent setting."));
+                await this.ShowMessageAsync("Result", "You said: " + (result == MessageDialogResult.Affirmative ? mySettings.AffirmativeButtonText : mySettings.NegativeButtonText +
+                    Environment.NewLine + Environment.NewLine + "This dialog will follow the Use Accent setting."));
         }
 
         private async void ShowSimpleDialog(object sender, RoutedEventArgs e)
         {
             this.MetroDialogOptions.ColorScheme = UseAccentForDialogsMenuItem.IsChecked ? MetroDialogColorScheme.Accented : MetroDialogColorScheme.Theme;
 
-            var dialog = (BaseMetroDialog) this.Resources["SimpleDialogTest"];
+            var dialog = (BaseMetroDialog)this.Resources["SimpleDialogTest"];
 
             await this.ShowMetroDialogAsync(dialog);
-            
+
             await TaskEx.Delay(5000);
-            
+
             await this.HideMetroDialogAsync(dialog);
         }
         private async void ShowProgressDialog(object sender, RoutedEventArgs e)
@@ -157,7 +155,7 @@ namespace MetroDemo
                     break; //canceled progressdialog auto closes.
 
                 i += 1.0;
-                
+
                 await TaskEx.Delay(2000);
             }
 
@@ -167,11 +165,22 @@ namespace MetroDemo
             {
                 await this.ShowMessageAsync("No cupcakes!", "You stopped baking!");
             }
-
             else
             {
                 await this.ShowMessageAsync("Cupcakes!", "Your cupcakes are finished! Enjoy!");
             }
+        }
+
+        private async void ShowInputDialog(object sender, RoutedEventArgs e)
+        {
+            this.MetroDialogOptions.ColorScheme = UseAccentForDialogsMenuItem.IsChecked ? MetroDialogColorScheme.Accented : MetroDialogColorScheme.Theme;
+
+            var result = await this.ShowInputAsync("Hello!", "What is your name?");
+
+            if (result == null) //user pressed cancel
+                return;
+
+            await this.ShowMessageAsync("Hello", "Hello " + result + "!");
         }
 
         private void FlipView_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -207,11 +216,11 @@ namespace MetroDemo
         {
             var navWin = new MetroNavigationWindow();
             navWin.Title = "Navigation Demo";
-            
+
             //uncomment the next two lines if you want the clean style.
             //navWin.Resources.MergedDictionaries.Add(new ResourceDictionary() { Source = new Uri("pack://application:,,,/MahApps.Metro;component/Styles/Clean/CleanWindow.xaml", UriKind.Absolute) });
             //navWin.SetResourceReference(StyleProperty, "CleanWindowStyleKey");
-            
+
             navWin.Show();
             navWin.Navigate(new Navigation.HomePage());
         }

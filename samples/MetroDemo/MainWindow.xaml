@@ -6,6 +6,8 @@
                       xmlns:Dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                      xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+                      xmlns:behaviours="http://metro.mahapps.com/winfx/xaml/shared"
                       Title="MahApps.Metro - Demo Application"
                       Width="960"
                       Height="600"
@@ -67,7 +69,6 @@
         <Controls:WindowCommands>
             <Button Click="LaunchVisualStudioDemo" Content="VS Demo" />
             <Button Click="LaunchFlyoutDemo" Content="Flyout Demo" />
-            <Button Click="LaunchPanoramaDemo" Content="Panorama Demo" />
             <Button Click="LaunchIcons" Content="Icons" />
             <Button Click="LauchCleanDemo" Content="Clean Demo" />
             <!--<Button Click="LaunchRibbonDemo" Content="Ribbon Demo (.NET 4.5)" />-->
@@ -97,6 +98,7 @@
                 <MenuItem Header="Dialogs">
                     <MenuItem Header="Use Accent?" x:Name="UseAccentForDialogsMenuItem" IsCheckable="True" />
                     <Separator />
+                    <MenuItem Click="ShowInputDialog" Header="Show InputDialog" />
                     <MenuItem Click="ShowMessageDialog" Header="Show MessageDialog" />
                     <MenuItem Click="ShowProgressDialog" Header="Show ProgressDialog" />
                     <MenuItem Click="ShowSimpleDialog" Header="Show SimpleDialog" />
@@ -346,9 +348,14 @@
                                          Controls:TextboxHelper.Watermark="Watermark"
                                          Controls:ControlsHelper.ButtonWidth="30"
                                          Text="Big" />
-                                <TextBox Margin="0, 10, 0, 0"
+                                <TextBox Margin="0, 10, 0, 0" Name="test1"
                                          Controls:TextboxHelper.Watermark="Search style"
                                          Controls:TextboxHelper.ButtonCommand="{Binding TextBoxButtonCmd, Mode=OneWay}"
+                                         Style="{DynamicResource SearchMetroTextBox}" />
+                                <TextBox Margin="0, 10, 0, 0" Name="test2"
+                                         Controls:TextboxHelper.Watermark="Enter parameter"
+                                         Controls:TextboxHelper.ButtonCommand="{Binding TextBoxButtonCmdWithParameter, Mode=OneWay}"
+                                         Controls:TextboxHelper.ButtonCommandParameter="{Binding ElementName=test2, Path=Text}"
                                          Style="{DynamicResource SearchMetroTextBox}" />
                                 <TextBox Margin="0, 10, 0, 0"
                                          FontSize="18"
@@ -460,32 +467,33 @@
                                 <Label Content="NumericUpDown"
                                        Style="{StaticResource DescriptionHeaderStyle}" />
 
-                                <Label Content='Minimum="0", Maximum="10"' />
-                                <Controls:NumericUpDown Value="5"
-                                                        Minimum="0" 
+                                <Label Content='Minimum="0", Maximum="10" TextAlignment="Left"' />
+                                <Controls:NumericUpDown Value="5" TextAlignment="Left"
+                                                        Minimum="0" IsReadOnly="True"
                                                         Maximum="10" />
 
-                                <Label Content='SmallChange="2"' />
+                                <Label Content='Interval="2"' />
                                 <Controls:NumericUpDown Value="5" 
-                                                        SmallChange="2" />
-                                <Label Content='SmallChange="5"' />
-                                <Controls:NumericUpDown Value="5" 
-                                                        SmallChange="5" />
+                                                        Interval="2" />
+                                <Label Content='Interval="5"' />
+                                <Controls:NumericUpDown Value="5"  
+                                                        Controls:TextboxHelper.ClearTextButton="True"
+                                                        Interval="5" />
 
                                 <Label Content="No Speedup when long pressed" />
                                 <Controls:NumericUpDown Value="5" 
                                                         Speedup="false" />
-                                <Label Content="Speedup when long pressed" />
-                                <Controls:NumericUpDown Value="5" 
+                                <Label Content="Speedup when long pressed but after 500ms" />
+                                <Controls:NumericUpDown Controls:TextboxHelper.Watermark="Test" Delay="500" 
                                                         Speedup="true" />
 
                                 <Label Content="StringFormat" />
+                                <Label Content="{Binding ElementName=test, Path=Value}" />
                                 <Controls:NumericUpDown Value="5" 
-                                                        SmallChange=".1"  
-                                                        StringFormat="C2" />
+                                                      x:Name="test"  StringFormat="pcs. {0:N2} pcs." Maximum="100"/>
                                 <Controls:NumericUpDown Value="5"
-                                                        SmallChange=".1" 
-                                                        StringFormat="N2" />
+                                                        Interval=".1" 
+                                                        StringFormat="0,000.00" />
                             </StackPanel>
                         </Grid>
                     </AdornerDecorator>
@@ -866,13 +874,6 @@
                                 <Controls:ProgressRing Grid.Column="1" IsActive="True" Width="40" Height="40" />
                                 <Controls:ProgressRing Grid.Column="2" IsActive="True" Width="20" Height="20" />
                             </Grid>
-                            <Label Margin="0, 10, 0, 0"
-                                   Content="ProgressIndicator"
-                                   Style="{StaticResource DescriptionHeaderStyle}" />
-                            <Controls:ProgressIndicator Width="100"
-                                                        Height="10"
-                                                        Margin="0, 10, 0, 0"
-                                                        ProgressColor="{DynamicResource AccentColorBrush}" />
                         </StackPanel>
                         <Grid Grid.Row="2" Grid.Column="2">
                             <Label VerticalAlignment="top" HorizontalAlignment="Center" Content="Sliders TickPlacement" Style="{StaticResource DescriptionHeaderStyle}" />
@@ -1177,6 +1178,43 @@
                         </DataGrid>
                     </Grid>
                 </TabItem>
+                <TabItem Header="colors">
+                    <ScrollViewer>
+                        <ItemsControl ItemsSource="{Binding BrushResources}"  Grid.IsSharedSizeScope="True" >
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid ToolTip="{Binding}" MinHeight="40" Margin="5">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition SharedSizeGroup="color"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+                                        <Ellipse Stroke="#bdbdbd" Height="80" Width="80" Grid.Row="0">
+                                            <i:Interaction.Behaviors>
+                                                <behaviours:BindableResourceBehavior
+                                                    ResourceName="{Binding}"
+                                                    Property="{x:Static Shape.FillProperty}"/>
+                                            </i:Interaction.Behaviors>
+                                        </Ellipse>
+                                        <TextBlock Grid.Row="1"
+                                                   Margin="4,2,4,10"
+                                                   FontSize="{DynamicResource NormalFontSize}"
+                                                   TextAlignment="Center"
+                                                   Foreground="Black"
+                                                   Text="{Binding}" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </TabItem>
                 <TabItem Header="others">
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -1219,14 +1257,35 @@
                                     </VisualState>
                                 </Controls:TransitioningContentControl.CustomVisualStates>
                             </Controls:TransitioningContentControl>
-                        </StackPanel>
-                        <StackPanel Grid.Column="1">
-                            <Label Content="Tile" Style="{StaticResource DescriptionHeaderStyle}" />
-                            <Controls:Tile Title="My cupcakes"
-                                           Margin="0, 10, 0, 0"
-                                           Count="23">
-                                <Controls:MetroImage Margin="0, 0, 10, 0" Source="{StaticResource appbar_cupcake}" />
-                            </Controls:Tile>
+                            <Controls:TransitioningContentControl x:Name="SecondcustomTransitioning"
+                                                                  Width="250"
+                                                                  Height="50"
+                                                                  Margin="0, 10, 0, 0"
+                                                                  Transition="Custom" CustomVisualStatesName="SecondCustomTransition">
+                                <Controls:TransitioningContentControl.CustomVisualStates>
+                                    <VisualState x:Name="SecondCustomTransition">
+                                        <Storyboard>
+                                            <DoubleAnimationUsingKeyFrames BeginTime="00:00:00"
+                                                                           Storyboard.TargetName="CurrentContentPresentationSite"
+                                                                           Storyboard.TargetProperty="(UIElement.Opacity)">
+                                                <SplineDoubleKeyFrame KeyTime="00:00:00" Value="0"/>
+                                                <SplineDoubleKeyFrame KeyTime="00:00:00.5" Value="0" />
+                                                <EasingDoubleKeyFrame KeyTime="00:00:01" Value="1" >
+                                                    <EasingDoubleKeyFrame.EasingFunction>
+                                                        <SineEase/>
+                                                    </EasingDoubleKeyFrame.EasingFunction>
+                                                </EasingDoubleKeyFrame>
+                                            </DoubleAnimationUsingKeyFrames>
+                                            <DoubleAnimationUsingKeyFrames BeginTime="00:00:00"
+                                                                           Storyboard.TargetName="PreviousContentPresentationSite"
+                                                                           Storyboard.TargetProperty="(UIElement.Opacity)">
+                                                <SplineDoubleKeyFrame KeyTime="00:00:00" Value="1" />
+                                                <SplineDoubleKeyFrame KeyTime="00:00:00.5" Value="0" />
+                                            </DoubleAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </Controls:TransitioningContentControl.CustomVisualStates>
+                            </Controls:TransitioningContentControl>
                         </StackPanel>
                         <Grid Grid.Row="1" Grid.ColumnSpan="2">
                             <Label Content="Context menu" Style="{StaticResource DescriptionHeaderStyle}" />
@@ -1257,16 +1316,31 @@
                             <StackPanel Orientation="Horizontal" Height="20" Margin="0 0 0 5">
                                 <CheckBox Height="20" Content="Show Banner?" x:Name="ShowBannerCheckBox" HorizontalAlignment="Right"/>
                             </StackPanel>
-                            <Controls:FlipView Height="200" IsBannerEnabled="{Binding ElementName=ShowBannerCheckBox, Path=IsChecked, UpdateSourceTrigger=PropertyChanged}" SelectionChanged="FlipView_SelectionChanged">
+                            <Controls:FlipView Height="200" 
+                                               IsBannerEnabled="{Binding ElementName=ShowBannerCheckBox, Path=IsChecked, UpdateSourceTrigger=PropertyChanged}" 
+                                               SelectionChanged="FlipView_SelectionChanged"
+                                               Margin="0, 0, 10, 0">
                                 <Controls:FlipView.Items>
-                                    <Grid Background="Blue">
-                                        <Controls:MetroImage Margin="0, 0, 10, 0" Source="{StaticResource appbar_cupcake}" />
+                                    <Grid Background="#2E8DEF">
+                                        <Rectangle Margin="0, 0, 10, 0" Width="50" Height="50">
+                                            <Rectangle.Fill>
+                                                <VisualBrush Visual="{StaticResource appbar_cupcake}" />
+                                            </Rectangle.Fill>
+                                        </Rectangle>
                                     </Grid>
-                                    <Grid Background="Green">
-                                        <Controls:MetroImage Margin="0, 0, 10, 0" Source="{StaticResource appbar_xbox}" />
+                                    <Grid Background="#00A600">
+                                        <Rectangle Margin="0, 0, 10, 0" Width="50" Height="50">
+                                            <Rectangle.Fill>
+                                                <VisualBrush Visual="{StaticResource appbar_xbox}" />
+                                            </Rectangle.Fill>
+                                        </Rectangle>
                                     </Grid>
-                                    <Grid Background="Red">
-                                        <Controls:MetroImage Margin="0, 0, 10, 0" Source="{StaticResource appbar_chess_horse}" />
+                                    <Grid Background="#BF1E4B">
+                                        <Rectangle Margin="0, 0, 10, 0" Width="50" Height="50">
+                                            <Rectangle.Fill>
+                                                <VisualBrush Visual="{StaticResource appbar_chess_horse}" />
+                                            </Rectangle.Fill>
+                                        </Rectangle>
                                     </Grid>
                                 </Controls:FlipView.Items>
                             </Controls:FlipView>

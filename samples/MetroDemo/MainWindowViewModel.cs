@@ -1,13 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using MahApps.Metro;
-using MahApps.Metro.Controls;
 using MetroDemo.Models;
 using System.Windows.Input;
 
@@ -35,8 +33,6 @@ namespace MetroDemo
 
     public class MainWindowViewModel : INotifyPropertyChanged, IDataErrorInfo
     {
-        readonly PanoramaGroup _albums;
-        readonly PanoramaGroup _artists;
         int? _integerGreater10Property;
 
         public MainWindowViewModel()
@@ -50,22 +46,10 @@ namespace MetroDemo
             
             Albums = SampleData.Albums;
             Artists = SampleData.Artists;
-            
-            Busy = true;
 
-            _albums = new PanoramaGroup("trending tracks");
-            _artists = new PanoramaGroup("trending artists");
-
-            Groups = new ObservableCollection<PanoramaGroup> { _albums, _artists };
-
-            _artists.SetSource(SampleData.Artists.Take(25));
-            _albums.SetSource(SampleData.Albums.Take(25));
-
-            Busy = false;
+            BrushResources = FindBrushResources();
         }
 
-        public ObservableCollection<PanoramaGroup> Groups { get; set; }
-        public bool Busy { get; set; }
         public string Title { get; set; }
         public int SelectedIndex { get; set; }
         public List<Album> Albums { get; set; }
@@ -133,7 +117,35 @@ namespace MetroDemo
                 }
             }
         }
+        
+        private ICommand textBoxButtonCmdWithParameter;
 
+        public ICommand TextBoxButtonCmdWithParameter
+        {
+            get
+            {
+                return this.textBoxButtonCmdWithParameter ?? (this.textBoxButtonCmdWithParameter = new TextBoxButtonCommandWithIntParameter());
+            }
+        }
+
+        public class TextBoxButtonCommandWithIntParameter : ICommand
+        {
+            public bool CanExecute(object parameter)
+            {
+                return true;
+            }
+
+            public event EventHandler CanExecuteChanged;
+
+            public void Execute(object parameter)
+            {
+                if (parameter is String)
+                {
+                    MessageBox.Show("TextBox Button was clicked with parameter!" + Environment.NewLine + "Text: " + parameter);
+                }
+            }
+        }
+        
         public event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>
@@ -200,6 +212,24 @@ namespace MetroDemo
             {
 
             }
+        }
+
+        public IEnumerable<string> BrushResources { get; private set; }
+
+        private IEnumerable<string> FindBrushResources()
+        {
+            var rd = new ResourceDictionary
+                {
+                    Source = new Uri(@"/MahApps.Metro;component/Styles/Colors.xaml", UriKind.RelativeOrAbsolute)
+                };
+
+            var resources = rd.Keys.Cast<object>()
+                    .Where(key => rd[key] is Brush)
+                    .Select(key => key.ToString())
+                    .OrderBy(s => s)
+                    .ToList();
+
+            return resources;
         }
     }
 }
