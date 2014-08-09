@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -6,10 +7,9 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using System.Windows.Shapes;
 using MahApps.Metro.Controls.Dialogs;
 using MahApps.Metro.Native;
-using System.Windows.Shapes;
-using System.Collections.Generic;
 
 namespace MahApps.Metro.Controls
 {
@@ -66,7 +66,7 @@ namespace MahApps.Metro.Controls
 
         public static readonly DependencyProperty IconTemplateProperty = DependencyProperty.Register("IconTemplate", typeof(DataTemplate), typeof(MetroWindow), new PropertyMetadata(null));
         public static readonly DependencyProperty TitleTemplateProperty = DependencyProperty.Register("TitleTemplate", typeof(DataTemplate), typeof(MetroWindow), new PropertyMetadata(null));
-        
+
         public static readonly DependencyProperty LeftWindowCommandsProperty = DependencyProperty.Register("LeftWindowCommands", typeof(WindowCommands), typeof(MetroWindow), new PropertyMetadata(null));
         public static readonly DependencyProperty RightWindowCommandsProperty = DependencyProperty.Register("RightWindowCommands", typeof(WindowCommands), typeof(MetroWindow), new PropertyMetadata(null));
         [Obsolete("This property is obsolete and will be delete in next release, use RightWindowCommands instead.")]
@@ -82,7 +82,7 @@ namespace MahApps.Metro.Controls
         public static readonly DependencyProperty WindowMinButtonStyleProperty = DependencyProperty.Register("WindowMinButtonStyle", typeof(Style), typeof(MetroWindow), new PropertyMetadata(null));
         public static readonly DependencyProperty WindowMaxButtonStyleProperty = DependencyProperty.Register("WindowMaxButtonStyle", typeof(Style), typeof(MetroWindow), new PropertyMetadata(null));
         public static readonly DependencyProperty WindowCloseButtonStyleProperty = DependencyProperty.Register("WindowCloseButtonStyle", typeof(Style), typeof(MetroWindow), new PropertyMetadata(null));
-        
+
         [Obsolete("This propery isn't needed anymore, it will be deleted in next release...")]
         public static readonly DependencyProperty TextBlockStyleProperty = DependencyProperty.Register("TextBlockStyle", typeof(Style), typeof(MetroWindow), new PropertyMetadata(default(Style)));
         public static readonly DependencyProperty UseNoneWindowStyleProperty = DependencyProperty.Register("UseNoneWindowStyle", typeof(bool), typeof(MetroWindow), new PropertyMetadata(false, OnUseNoneWindowStylePropertyChangedCallback));
@@ -96,7 +96,7 @@ namespace MahApps.Metro.Controls
         internal ContentPresenter LeftWindowCommandsPresenter;
         internal ContentPresenter RightWindowCommandsPresenter;
         internal WindowButtonCommands WindowButtonCommands;
-        
+
         internal Grid overlayBox;
         internal Grid metroDialogContainer;
         private Storyboard overlayStoryboard;
@@ -326,15 +326,6 @@ namespace MahApps.Metro.Controls
         }
 
         /// <summary>
-        /// Gets/sets edge mode of the titlebar icon.
-        /// </summary>
-        public EdgeMode IconEdgeMode
-        {
-            get { return (EdgeMode)this.GetValue(IconEdgeModeProperty); }
-            set { SetValue(IconEdgeModeProperty, value); }
-        }
-
-        /// <summary>
         /// Gets/sets bitmap scaling mode of the titlebar icon.
         /// </summary>
         public BitmapScalingMode IconBitmapScalingMode
@@ -451,7 +442,7 @@ namespace MahApps.Metro.Controls
             var newVisibility = visible && this.ShowTitleBar ? Visibility.Visible : Visibility.Collapsed;
             if (this.icon != null)
             {
-                var iconVisibility = this.IconOverlayBehavior.HasFlag(WindowCommandsOverlayBehavior.HiddenTitleBar) && !this.ShowTitleBar 
+                var iconVisibility = this.IconOverlayBehavior.HasFlag(WindowCommandsOverlayBehavior.HiddenTitleBar) && !this.ShowTitleBar
                     || this.ShowIconOnTitleBar && this.ShowTitleBar ? Visibility.Visible : Visibility.Collapsed;
                 this.icon.Visibility = iconVisibility;
             }
@@ -475,7 +466,7 @@ namespace MahApps.Metro.Controls
             }
             if (this.WindowButtonCommands != null)
             {
-                this.WindowButtonCommands.Visibility = this.WindowButtonCommandsOverlayBehavior.HasFlag(WindowCommandsOverlayBehavior.HiddenTitleBar) ? 
+                this.WindowButtonCommands.Visibility = this.WindowButtonCommandsOverlayBehavior.HasFlag(WindowCommandsOverlayBehavior.HiddenTitleBar) ?
                     Visibility.Visible : newVisibility;
             }
 
@@ -559,7 +550,7 @@ namespace MahApps.Metro.Controls
 
             var tcs = new System.Threading.Tasks.TaskCompletionSource<object>();
 
-            var sb = (Storyboard) this.Template.Resources["OverlayFastSemiFadeIn"];
+            var sb = (Storyboard)this.Template.Resources["OverlayFastSemiFadeIn"];
 
             sb = sb.Clone();
 
@@ -597,7 +588,7 @@ namespace MahApps.Metro.Controls
 
             var tcs = new System.Threading.Tasks.TaskCompletionSource<object>();
 
-            var sb = (Storyboard) this.Template.Resources["OverlayFastSemiFadeOut"];
+            var sb = (Storyboard)this.Template.Resources["OverlayFastSemiFadeOut"];
 
             sb = sb.Clone();
 
@@ -741,7 +732,7 @@ namespace MahApps.Metro.Controls
                 this.HandleWindowCommandsForFlyouts(flyouts);
             }
         }
-        
+
         private void FlyoutsPreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
             FrameworkElement element = (e.OriginalSource as FrameworkElement);
@@ -749,7 +740,7 @@ namespace MahApps.Metro.Controls
             {
                 return;
             }
-            
+
             if (Flyouts.OverrideExternalCloseButton == null)
             {
                 foreach (Flyout flyout in Flyouts.GetFlyouts().Where(x => x.IsOpen && x.ExternalCloseButton == e.ChangedButton && (!x.IsPinned || Flyouts.OverrideIsPinned)))
@@ -789,7 +780,7 @@ namespace MahApps.Metro.Controls
 
             overlayBox = GetTemplateChild(PART_OverlayBox) as Grid;
             metroDialogContainer = GetTemplateChild(PART_MetroDialogContainer) as Grid;
-            flyoutModal = (Rectangle) GetTemplateChild(PART_FlyoutModal);
+            flyoutModal = (Rectangle)GetTemplateChild(PART_FlyoutModal);
             flyoutModal.PreviewMouseDown += FlyoutsPreviewMouseDown;
             this.PreviewMouseDown += FlyoutsPreviewMouseDown;
 
@@ -942,7 +933,7 @@ namespace MahApps.Metro.Controls
 
             var hmenu = UnsafeNativeMethods.GetSystemMenu(hwnd, false);
 
-            var cmd = UnsafeNativeMethods.TrackPopupMenuEx(hmenu, Constants.TPM_LEFTBUTTON | Constants.TPM_RETURNCMD, 
+            var cmd = UnsafeNativeMethods.TrackPopupMenuEx(hmenu, Constants.TPM_LEFTBUTTON | Constants.TPM_RETURNCMD,
                 (int)physicalScreenLocation.X, (int)physicalScreenLocation.Y, hwnd, IntPtr.Zero);
             if (0 != cmd)
                 UnsafeNativeMethods.PostMessage(hwnd, Constants.SYSCOMMAND, new IntPtr(cmd), IntPtr.Zero);
@@ -960,7 +951,7 @@ namespace MahApps.Metro.Controls
                 //if the the corresponding behavior has the right flag, set the window commands' and icon zIndex to a number that is higher than the flyout's. 
                 if (icon != null)
                 {
-                    icon.SetValue(Panel.ZIndexProperty, 
+                    icon.SetValue(Panel.ZIndexProperty,
                         this.IconOverlayBehavior.HasFlag(WindowCommandsOverlayBehavior.Flyouts) && this.ShowWindowCommandsOnTop ? zIndex : 1);
                 }
 
@@ -995,7 +986,8 @@ namespace MahApps.Metro.Controls
 
         public class FlyoutStatusChangedRoutedEventArgs : RoutedEventArgs
         {
-            internal FlyoutStatusChangedRoutedEventArgs(RoutedEvent rEvent, object source): base(rEvent, source)
+            internal FlyoutStatusChangedRoutedEventArgs(RoutedEvent rEvent, object source)
+                : base(rEvent, source)
             { }
 
             public Flyout ChangedFlyout { get; internal set; }
