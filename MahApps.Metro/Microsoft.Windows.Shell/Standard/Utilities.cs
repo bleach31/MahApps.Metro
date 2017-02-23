@@ -432,7 +432,7 @@ namespace Standard
             {
                 source.Position = 0;
 
-                // Consider that this could throw because 
+                // Consider that this could throw because
                 // the source stream doesn't know it's size...
                 destination.SetLength(source.Length);
             }
